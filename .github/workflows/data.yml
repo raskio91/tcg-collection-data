@@ -18,7 +18,14 @@ jobs:
         with: { node-version: 22 }
       - name: Dati del giorno precedente
         run: git clone -q --depth 1 -b data "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" data-out || mkdir -p data-out
-      - run: node tools/build-data.mjs data-out
+      - name: Costruisci i dati
+        run: node tools/build-data.mjs data-out 2>&1 | tee build.log; exit ${PIPESTATUS[0]}
+      - name: Registro in caso di errore
+        if: failure()
+        run: |
+          mkdir -p logdir && cp build.log logdir/ || true
+          cd logdir && git init -q -b log && git config user.name raskio91 && git config user.email raskio91@users.noreply.github.com
+          git add -A && git commit -q -m log && git push -f -q "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" log
       - name: Pubblica sul branch data
         run: |
           cd data-out && rm -rf .git && git init -q -b data && git config user.name raskio91 && git config user.email raskio91@users.noreply.github.com
