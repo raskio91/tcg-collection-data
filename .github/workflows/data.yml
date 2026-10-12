@@ -20,6 +20,10 @@ jobs:
         run: git clone -q --depth 1 -b data "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" data-out || mkdir -p data-out
       - name: Costruisci i dati
         run: node tools/build-data.mjs data-out 2>&1 | tee build.log; exit ${PIPESTATUS[0]}
+      - name: Impronte delle carte (fotocamera)
+        continue-on-error: true
+        timeout-minutes: 70
+        run: npm i --no-save --no-audit --no-fund sharp && node tools/fingerprints.mjs data-out 2>&1 | tee -a build.log; exit ${PIPESTATUS[0]}
       - name: Registro in caso di errore
         if: failure()
         run: |
