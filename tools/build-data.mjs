@@ -204,7 +204,7 @@ async function europe() {
   write('eu/extra.json', out);
 
   // carte europee senza immagine su TCGdex: immagine da TCGplayer (stesso set; stesso numero o stesso nome)
-  const ALIAS = { '30th-c': '30th Celebration: Classic Collection', '30th': '30th Celebration' };
+  const ALIAS = { '30th-c': '30th Celebration: Classic Collection', '30th': '30th Celebration', miscp: ['WoTC Promo', 'Miscellaneous Cards & Products', 'Black Star Promos'] };
   const STOP = new Set(['the', 'and', 'pokemon', 'set', 'of', 'series', 'tcg']);
   const toks = n => new Set(String(n).toLowerCase().normalize('NFKD').replace(/[̀-ͯ]/g, '').replace(/&/g, ' ').split(/[^a-z0-9]+/).filter(w => w && !STOP.has(w)));
   const sim = (a, b) => { const A = toks(a), B = toks(b); let i = 0; for (const x of A) if (B.has(x)) i++; return i / Math.max(1, Math.min(A.size, B.size)) - Math.abs(A.size - B.size) * 0.05; };
@@ -240,10 +240,14 @@ async function europe() {
     const d = await getJSON(`${TDX}/en/sets/${encodeURIComponent(sid)}`, { gap: 30, ok404: true });
     const tdxCards = (d && d.cards) || [];
     const expected = (st.cardCount && (st.cardCount.total || st.cardCount.official)) || 0;
-    const target = ALIAS[sid] || st.name;
-    const year = (String(target).match(/\b(19|20)\d\d\b/) || [])[0];
-    const cands = groups.filter(g => !year || !/\b(19|20)\d\d\b/.test(g.name) || g.name.includes(year))
-      .map(g => [g, sim(target, strip(g.name))]).filter(x => x[1] >= 0.75).sort((a, b) => b[1] - a[1]).slice(0, 4).map(x => x[0]);
+    const targets = [].concat(ALIAS[sid] || st.name);
+    const cands = [];
+    for (const target of targets) {
+      const year = (String(target).match(/\b(19|20)\d\d\b/) || [])[0];
+      for (const g of groups.filter(g => !year || !/\b(19|20)\d\d\b/.test(g.name) || g.name.includes(year))
+        .map(g => [g, sim(target, strip(g.name))]).filter(x => x[1] >= 0.75).sort((a, b) => b[1] - a[1]).slice(0, 4).map(x => x[0]))
+        if (!cands.includes(g)) cands.push(g);
+    }
     if (tdxCards.length < expected) partial[sid] = `${tdxCards.length}/${expected}`;
     // set senza nessuna carta su TCGdex: elenco completo da TCGplayer
     if (!tdxCards.length) {
@@ -268,7 +272,7 @@ async function europe() {
       if (Object.keys(m).length > Object.keys(best).length) { best = m; bestG = g; }
     }
     // almeno metà delle carte abbinate, altrimenti è probabilmente il set sbagliato
-    if (bestG && Object.keys(best).length >= Math.ceil(lack.length / 2)) { Object.assign(img, best); used[sid] = bestG.name; }
+    if (bestG && Object.keys(best).length >= Math.ceil(lack.length / 2) && Object.keys(best).length > 0) { Object.assign(img, best); used[sid] = bestG.name; }
     const left = lack.length - (used[sid] ? Object.keys(best).length : 0);
     if (left) missing[sid] = left;
   }
