@@ -1,0 +1,22 @@
+name: Prova riconoscimento immagini
+on:
+  workflow_dispatch:
+    inputs:
+      n: { description: 'Numero di carte', default: '300' }
+permissions:
+  contents: write
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - run: git clone -q --depth 1 -b data "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" data-out
+      - run: npm i --no-save --no-audit --no-fund sharp
+      - run: mkdir -p res && cd res && node ../tools/fp-test.mjs ../data-out ${{ github.event.inputs.n }}
+      - name: Risultati sul branch fp-test
+        if: always()
+        run: |
+          cd res && git init -q -b fp-test && git config user.name raskio91 && git config user.email raskio91@users.noreply.github.com
+          git add -A && git commit -q -m test && git push -f -q "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" fp-test
