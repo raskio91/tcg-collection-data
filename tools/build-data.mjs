@@ -9,7 +9,7 @@ import path from 'path';
 const OUT = process.argv[2] || 'data-out';
 const TCSV = 'https://tcgcsv.com/tcgplayer';
 const TDX = 'https://api.tcgdex.net/v2';
-const UA = { 'User-Agent': 'tcg-collection/1.0 (github.com/raskio91/tcg-collection-data)' };
+const UA = { 'User-Agent': 'collezione-pokemon/1.0 (github.com/raskio91/pokemon-collectables)' };
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 let requests = 0;
 
@@ -20,6 +20,7 @@ async function getJSON(url, { tries = 4, gap = 120, ok404 = false } = {}) {
       const r = await fetch(url, { headers: UA });
       if (r.status === 404 && ok404) return null;
       if (r.ok) { await sleep(gap); return await r.json(); }
+      console.log('HTTP', r.status, url, (await r.text()).slice(0, 200));
     } catch (e) { /* riprova */ }
     await sleep(1500 * (i + 1));
   }
