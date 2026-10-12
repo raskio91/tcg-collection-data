@@ -1,0 +1,10 @@
+file:///home/runner/work/tcg-collection-data/tcg-collection-data/tools/build-data.mjs:27
+  throw new Error('Impossibile scaricare ' + url);
+        ^
+
+Error: Impossibile scaricare https://tcgcsv.com/tcgplayer/85/groups
+    at getJSON (file:///home/runner/work/tcg-collection-data/tcg-collection-data/tools/build-data.mjs:27:9)
+    at async japan (file:///home/runner/work/tcg-collection-data/tcg-collection-data/tools/build-data.mjs:92:19)
+    at async file:///home/runner/work/tcg-collection-data/tcg-collection-data/tools/build-data.mjs:298:16
+
+Node.js v22.23.3
