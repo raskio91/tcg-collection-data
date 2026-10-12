@@ -1,7 +1,7 @@
 // Costruisce i dati aggiuntivi dell'app (una volta al giorno, su GitHub):
-// - set giapponesi completi da TCGCSV (catalogo TCGplayer "Pokemon Japan"), abbinati a TCGdex dove possibile
+// - set giapponesi completi da TCGCSV (catalogo TCGplayer giapponese, categoria 85), abbinati a TCGdex dove possibile
 //   (stessi codici => stesse carte salvate e prezzi Cardmarket)
-// - set europei nuovi che TCGdex non ha ancora (TCGCSV "Pokemon")
+// - set europei nuovi che TCGdex non ha ancora (TCGCSV, categoria 3)
 // Uso: node tools/build-data.mjs <cartella di uscita>
 import fs from 'fs';
 import path from 'path';
@@ -9,6 +9,7 @@ import path from 'path';
 const OUT = process.argv[2] || 'data-out';
 const TCSV = 'https://tcgcsv.com/tcgplayer';
 const TDX = 'https://api.tcgdex.net/v2';
+// User-Agent storico: TCGCSV rifiuta quelli nuovi, quindi resta questo
 const UA = { 'User-Agent': 'collezione-pokemon/1.0 (github.com/raskio91/pokemon-collectables)' };
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 let requests = 0;
@@ -34,7 +35,7 @@ const num = s => { const m = String(s || '').match(/^\s*0*(\d+)/); return m ? Nu
 const norm = s => String(s || '').toLowerCase().normalize('NFKD').replace(/[̀-ͯ]/g, '').replace(/&/g, 'and').replace(/[^a-z0-9]/g, '');
 const IMG = pid => `https://tcgplayer-cdn.tcgplayer.com/product/${pid}`;
 
-// versioni speciali stampate con un motivo (Poké Ball, Master Ball…): le teniamo a parte come "edizioni"
+// versioni speciali stampate con un motivo (es. Ball): le teniamo a parte come "edizioni"
 const VARIANT_RX = /\s*\((poke ?ball|pokeball|monster ball|master ball|quick ball|love ball|friend ball|dusk ball|team rocket|energy symbol)(?: pattern)?\)/i;
 const VARIANT_CODE = { 'poke ball': 'pb', 'pokeball': 'pb', 'monster ball': 'pb', 'master ball': 'mb', 'quick ball': 'qb', 'love ball': 'lb', 'friend ball': 'fb', 'dusk ball': 'db', 'team rocket': 'tr', 'energy symbol': 'en' };
 const VARIANT_ORDER = ['pb', 'mb', 'qb', 'lb', 'fb', 'db', 'tr', 'en'];
@@ -280,7 +281,7 @@ async function europe() {
   write('eu/fill.json', fill);
   write('eu/empty.json', empty);
 
-  // versioni speciali (Poké Ball, Master Ball…) dei set europei recenti
+  // versioni speciali con motivo dei set europei recenti
   const euVar = {};
   for (const g of groups.filter(x => (x.publishedOn || '') >= '2022-01-01')) {
     const cs = await groupCards(3, g.groupId);
