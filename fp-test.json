@@ -1,0 +1,258 @@
+{
+ "cards": 400,
+ "top1": 360,
+ "sameArtTop1": 373,
+ "top5": 399,
+ "levels": {
+  "facile": {
+   "tot": 134,
+   "top1": 120,
+   "top5": 134
+  },
+  "medio": {
+   "tot": 133,
+   "top1": 121,
+   "top5": 133
+  },
+  "difficile": {
+   "tot": 133,
+   "top1": 119,
+   "top5": 132
+  }
+ },
+ "avgMs": 98,
+ "dTrue": {
+  "p10": 6,
+  "p50": 11,
+  "p90": 17,
+  "p95": 19
+ },
+ "dWrong": {
+  "p5": 11,
+  "p10": 14,
+  "p50": 29
+ },
+ "histTrue": {
+  "0": 10,
+  "4": 62,
+  "8": 137,
+  "12": 123,
+  "16": 49,
+  "20": 15,
+  "24": 4
+ },
+ "histWrong": {
+  "0": 3,
+  "4": 5,
+  "8": 14,
+  "12": 30,
+  "16": 19,
+  "20": 16,
+  "24": 42,
+  "28": 165,
+  "32": 97,
+  "36": 7
+ },
+ "fails": [
+  {
+   "level": "medio",
+   "card": "lc-84",
+   "set": "lc",
+   "got": "base4-84",
+   "dTrue": 15,
+   "dGot": 14
+  },
+  {
+   "level": "difficile",
+   "card": "base3-21",
+   "set": "base3",
+   "got": "lc-46",
+   "dTrue": 16,
+   "dGot": 12
+  },
+  {
+   "level": "facile",
+   "card": "xy9-43",
+   "set": "xy9",
+   "got": "tk-xy-p-4",
+   "dTrue": 11,
+   "dGot": 10
+  },
+  {
+   "level": "facile",
+   "card": "2024sv-14",
+   "set": "2024sv",
+   "got": "swshp-SWSH029",
+   "dTrue": 13,
+   "dGot": 10
+  },
+  {
+   "level": "facile",
+   "card": "swsh12.5-125",
+   "set": "swsh12.5",
+   "got": "swsh1-159",
+   "dTrue": 10,
+   "dGot": 10
+  },
+  {
+   "level": "facile",
+   "card": "XY2-tp603347",
+   "set": "XY2",
+   "got": "tp24514-tp660446",
+   "dTrue": 9,
+   "dGot": 9
+  },
+  {
+   "level": "facile",
+   "card": "SV3a-026",
+   "set": "SV3a",
+   "got": "SV8a-080",
+   "dTrue": 9,
+   "dGot": 7
+  },
+  {
+   "level": "facile",
+   "card": "M-P-067",
+   "set": "M-P",
+   "got": "M2a-070",
+   "dTrue": 11,
+   "dGot": 11
+  },
+  {
+   "level": "difficile",
+   "card": "SM8-083",
+   "set": "SM8",
+   "got": "SM12a-138",
+   "dTrue": 15,
+   "dGot": 13
+  },
+  {
+   "level": "medio",
+   "card": "tp24111-tp612213",
+   "set": "tp24111",
+   "got": "tp24127-tp612958",
+   "dTrue": 14,
+   "dGot": 9
+  },
+  {
+   "level": "difficile",
+   "card": "tp24105-tp611955",
+   "set": "tp24105",
+   "got": "tp24147-tp613797",
+   "dTrue": 15,
+   "dGot": 13
+  },
+  {
+   "level": "medio",
+   "card": "SM1M-073",
+   "set": "SM1M",
+   "got": "SM2L-062",
+   "dTrue": 14,
+   "dGot": 10
+  },
+  {
+   "level": "facile",
+   "card": "tp23873-tp596647",
+   "set": "tp23873",
+   "got": "tp23863-tp596102",
+   "dTrue": 4,
+   "dGot": 2
+  },
+  {
+   "level": "difficile",
+   "card": "SVLN-013",
+   "set": "SVLN",
+   "got": "SV-P-125",
+   "dTrue": 14,
+   "dGot": 9
+  },
+  {
+   "level": "medio",
+   "card": "tp24567-tp678535",
+   "set": "tp24567",
+   "got": "tp24607-tp677300",
+   "dTrue": 12,
+   "dGot": 11
+  },
+  {
+   "level": "medio",
+   "card": "tp24107-tp612161",
+   "set": "tp24107",
+   "got": "tp24108-tp612169",
+   "dTrue": 13,
+   "dGot": 6
+  },
+  {
+   "level": "difficile",
+   "card": "XY5a-tp603692",
+   "set": "XY5a",
+   "got": "tp23963-tp605252",
+   "dTrue": 15,
+   "dGot": 13
+  },
+  {
+   "level": "facile",
+   "card": "SV1a-069",
+   "set": "SV1a",
+   "got": "tp24444-tp660136",
+   "dTrue": 2,
+   "dGot": 2
+  },
+  {
+   "level": "medio",
+   "card": "tp23963-tp605259",
+   "set": "tp23963",
+   "got": "tp23817-tp591892",
+   "dTrue": 16,
+   "dGot": 15
+  },
+  {
+   "level": "difficile",
+   "card": "tp23959-tp605117",
+   "set": "tp23959",
+   "got": "tp23887-tp598699",
+   "dTrue": 15,
+   "dGot": 14
+  },
+  {
+   "level": "difficile",
+   "card": "PMCG1-tp577167",
+   "set": "PMCG1",
+   "got": "tp24161-tp614114",
+   "dTrue": 16,
+   "dGot": 15
+  },
+  {
+   "level": "difficile",
+   "card": "S12a-168",
+   "set": "S12a",
+   "got": "S9a-067",
+   "dTrue": 14,
+   "dGot": 12
+  },
+  {
+   "level": "difficile",
+   "card": "tp23822-tp593422",
+   "set": "tp23822",
+   "got": "tp23803-tp588856",
+   "dTrue": 18,
+   "dGot": 15
+  },
+  {
+   "level": "difficile",
+   "card": "tp23870-tp708245",
+   "set": "tp23870",
+   "got": "tp24817-tp711335",
+   "dTrue": 18,
+   "dGot": 16
+  },
+  {
+   "level": "difficile",
+   "card": "tp24137-tp613367",
+   "set": "tp24137",
+   "got": "tp24048-tp609120",
+   "dTrue": 10,
+   "dGot": 8
+  }
+ ]
+}
