@@ -1,0 +1,26 @@
+name: Prezzi CardTrader (giornaliero)
+on:
+  schedule:
+    - cron: '43 5 * * *'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency: { group: data, cancel-in-progress: false }
+jobs:
+  prezzi:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - name: Dati attuali
+        run: git clone -q --depth 1 -b data "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" data-out
+      - name: Prezzi per condizione
+        env:
+          CARDTRADER_TOKEN: ${{ secrets.CARDTRADER_TOKEN }}
+        run: node tools/cardtrader.mjs data-out
+      - name: Pubblica sul branch data
+        run: |
+          cd data-out && rm -rf .git && git init -q -b data && git config user.name raskio91 && git config user.email raskio91@users.noreply.github.com
+          git add -A && git commit -q -m "Dati + prezzi CardTrader $(date -u +%F)" && git push -f -q "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" data
