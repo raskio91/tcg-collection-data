@@ -1,0 +1,19 @@
+name: Prova CardTrader
+on: workflow_dispatch
+permissions:
+  contents: write
+jobs:
+  explore:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - run: mkdir -p res && cd res && node ../tools/ct-explore.mjs
+        env:
+          CARDTRADER_TOKEN: ${{ secrets.CARDTRADER_TOKEN }}
+      - name: Risultati sul branch ct-test
+        if: always()
+        run: |
+          cd res && git init -q -b ct-test && git config user.name raskio91 && git config user.email raskio91@users.noreply.github.com
+          git add -A && git commit -q -m test && git push -f -q "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" ct-test
