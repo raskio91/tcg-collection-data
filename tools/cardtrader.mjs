@@ -78,6 +78,12 @@ const files = {};
 for (const [id, m] of acc) {
   const o = {};
   for (const [k, arr] of Object.entries(m)) { arr.sort((a, b) => a - b); const low = arr.slice(0, 3); o[k] = [low[Math.floor((low.length - 1) / 2)], arr.length]; }
+  // una condizione peggiore non può costare più di una migliore (se la NM costa meno, conviene quella)
+  const ORDER = ['NM', 'SP', 'MP', 'PL', 'PO'];
+  for (const k of Object.keys(o)) {
+    const [l, c, f] = k.split('|'); const i = ORDER.indexOf(c); if (l === 'g' || i <= 0) continue;
+    for (let j = 0; j < i; j++) { const b = o[[l, ORDER[j], f].filter(Boolean).join('|')]; if (b && b[0] < o[k][0]) o[k] = [b[0], o[k][1]]; }
+  }
   const kind = id[0], num = Number(id.slice(1)), f = `ct/${kind}/${num % B}.json`;
   (files[f] || (files[f] = {}))[num] = o;
 }
