@@ -41,7 +41,9 @@ const exps = ((await get('/expansions', 300)) || []).filter(e => e.game_id === 5
 console.log('espansioni', exps.length);
 const acc = new Map(); // "c123" / "t456" -> { key: [prezzi] }
 let bpTot = 0, offers = 0, gradedOk = 0, gradedAll = 0;
-const add = (ids, key, cents) => { for (const id of ids) { let m = acc.get(id); if (!m) acc.set(id, m = {}); (m[key] || (m[key] = [])).push(cents); } };
+// per numero di carta: alcune carte diverse condividono lo stesso prodotto Cardmarket (es. versione holo e non holo)
+const numKey = n => String(n ?? '').trim().toLowerCase().replace(/\/.*$/, '').replace(/^0+(?=\w)/, '') || '?';
+const add = (ids, key, cents, num) => { for (const id of ids) { let m = acc.get(id); if (!m) acc.set(id, m = {}); const g = m[num] || (m[num] = {}); (g[key] || (g[key] = [])).push(cents); } };
 for (const [n, e] of exps.entries()) {
   const bps = await get(`/blueprints/export?expansion_id=${e.id}`, 150);
   if (!Array.isArray(bps) || !bps.length) continue;
@@ -64,18 +66,18 @@ for (const [n, e] of exps.entries()) {
       if (p.graded) {
         gradedAll++;
         const g = grade(p.description); if (!g) continue;
-        gradedOk++; add(k, 'g|' + g, cents);
+        gradedOk++; add(k, 'g|' + g, cents, numKey(h.collector_number));
         continue;
       }
       const c = COND[h.condition]; if (!c) continue;
-      add(k, `${l}|${c}${h.first_edition ? '|1' : ''}`, cents);
+      add(k, `${l}|${c}${h.first_edition ? '|1' : ''}`, cents, numKey(h.collector_number));
     }
   }
   if (n % 50 === 0) console.log(n, e.name, Math.round((Date.now() - t0) / 1000) + 's');
 }
 // prezzo "da": mediana delle 3 offerte più economiche; con il numero di offerte
 const files = {};
-for (const [id, m] of acc) {
+function summarize(m) {
   const o = {};
   for (const [k, arr] of Object.entries(m)) { arr.sort((a, b) => a - b); const low = arr.slice(0, 3); o[k] = [low[Math.floor((low.length - 1) / 2)], arr.length]; }
   // una condizione peggiore non può costare più di una migliore (se la NM costa meno, conviene quella)
@@ -84,11 +86,21 @@ for (const [id, m] of acc) {
     const [l, c, f] = k.split('|'); const i = ORDER.indexOf(c); if (l === 'g' || i <= 0) continue;
     for (let j = 0; j < i; j++) { const b = o[[l, ORDER[j], f].filter(Boolean).join('|')]; if (b && b[0] < o[k][0]) o[k] = [b[0], o[k][1]]; }
   }
+  return o;
+}
+let split = 0;
+for (const [id, byNum] of acc) {
+  let nums = Object.keys(byNum);
+  // offerte senza numero insieme a un solo numero: sono la stessa carta
+  if (nums.includes('?') && nums.length === 2) { const n = nums.find(x => x !== '?'); for (const [k, arr] of Object.entries(byNum['?'])) (byNum[n][k] || (byNum[n][k] = [])).push(...arr); delete byNum['?']; nums = [n]; }
+  let o;
+  if (nums.length === 1) o = summarize(byNum[nums[0]]);
+  else { o = {}; for (const n of nums) o['#' + n] = summarize(byNum[n]); split++; }
   const kind = id[0], num = Number(id.slice(1)), f = `ct/${kind}/${num % B}.json`;
   (files[f] || (files[f] = {}))[num] = o;
 }
 for (const kind of ['c', 't']) { const d = path.join(OUT, 'ct', kind); fs.rmSync(d, { recursive: true, force: true }); fs.mkdirSync(d, { recursive: true }); }
 for (const [f, d] of Object.entries(files)) fs.writeFileSync(path.join(OUT, f), JSON.stringify(d));
-const meta = { updated: new Date().toISOString(), expansions: exps.length, blueprints: bpTot, ids: acc.size, offers, graded: gradedAll, gradedRead: gradedOk, calls, seconds: Math.round((Date.now() - t0) / 1000), buckets: B };
+const meta = { split, updated: new Date().toISOString(), expansions: exps.length, blueprints: bpTot, ids: acc.size, offers, graded: gradedAll, gradedRead: gradedOk, calls, seconds: Math.round((Date.now() - t0) / 1000), buckets: B };
 fs.writeFileSync(path.join(OUT, 'ct', 'meta.json'), JSON.stringify(meta));
 console.log(JSON.stringify(meta));
